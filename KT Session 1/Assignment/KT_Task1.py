@@ -123,8 +123,12 @@ def retrievePoseEstimates(videoPath):
         json.dump({"pose_x": pose_x, "pose_y": pose_y, "hand1_x": right_hand_x, "hand1_y": right_hand_y, "hand2_x": left_hand_x, "hand2_y": left_hand_y}, outputFile)
 
 if __name__=="__main__":
-    #Taking the original video path as the first command line argument
-    videoPath = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--file_path', type=str, required=True)
+    parser.add_argument('--save_dir', type=str, required=True)
+    args = parser.parse_args()
+    videoPath = args.file_path
+    saveDirPath = args.save_dir
     #Checking whether the specified path exist or not
     if(os.path.isfile(videoPath)):
         videoFileName = videoPath.split('/')[-1]
