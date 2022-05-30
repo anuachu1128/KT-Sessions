@@ -1,5 +1,3 @@
-#Enter the path of the video and path of directory to save as strings
-
 #Importing necessary libraries
 import sys
 import os
