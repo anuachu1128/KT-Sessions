@@ -9,7 +9,7 @@ import argparse
 
 
 #1. SUMMARY
-def videoSummary(videoPath):
+def videoSummary(videoPath, saveDirPath):
     summaryDict = {}
     summaryDict['video_path'] = videoPath
     #Getting components of the path seperated by '_' after removing .mp4 extension
@@ -35,10 +35,10 @@ def videoSummary(videoPath):
     return summaryDict
 
 #2. LOW RESOLUTION RGB SQUARE VIDEO
-def resizeAndCrop(videoPath):
+def resizeAndCrop(videoPath, saveDirPath):
     videoElem = cv2.VideoCapture(videoPath.split('/')[-1])
     #Saving the resized and cropped video in the path specified by the user taking in -input video file, codec to compress frames using FourCC code, framerate (fps), resolution
-    out = cv2.VideoWriter(sys.argv[2]+videoPath.split('/')[-1].strip('.mp4')+'_lowResRGB.avi',cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), float(videoElem.get(cv2.CAP_PROP_FPS)), (320,320))
+    out = cv2.VideoWriter(os.path.join(saveDirPath+"/", videoPath.split('/')[-1].strip('.mp4') + '_lowResRGB.avi'),cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), float(videoElem.get(cv2.CAP_PROP_FPS)), (320,320))
     while True:
         #Taking each frame of the video
         success, frame = videoElem.read()
@@ -114,12 +114,12 @@ if __name__=="__main__":
         videoFileName = videoPath.split('/')[-1]
         videoPathComp = videoFileName.strip('.mp4').split('_')
         if(len(videoPathComp)==3 or len(videoPathComp)==4):
+            summaryDict = videoSummary(videoPath)
+            print('\n----------------------------------VIDEO SUMMARY CREATED--------------------------------------------\n')
             resizeAndCrop(videoPath)
             print('\n-------------------------------LOW RESOLUTION RGB VIDEO CREATED--------------------------------------------\n')
             retrievePoseEstimates(videoPath)
             print('\n--------------------------------BODY POSE ESTIMATES CREATED--------------------------------------------\n')
-            videoSummary(videoPath)
-            print('\n----------------------------------VIDEO SUMMARY CREATED--------------------------------------------\n')
         else:
             print("\n INVALID!!! NAME OF THE VIDEO FILE IS NOT FOLLOWING THE NAMING CONVENTION\n")
     else:
