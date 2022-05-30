@@ -51,7 +51,7 @@ def resizeAndCrop(videoPath, saveDirPath):
     print()
 
 #3. BODY AND HAND POSE ESTIMATION
-def retrievePoseEstimates(videoPath):
+def retrievePoseEstimates(videoPath, saveDirPath):
     videoElem = cv2.VideoCapture(videoPath)
     # Initialize mediapipe Holistic class.
     mpPose = mp.solutions.holistic
@@ -97,8 +97,7 @@ def retrievePoseEstimates(videoPath):
         else:
             break
     
-    #Creating a JSON file in the path specified by the user
-    with open(sys.argv[2]+videoPath.split('/')[-1].strip('.mp4')+'_poseEstimate.json',"w") as outputFile:
+    with open(os.path.join(saveDirPath+"/", videoPath.split('/')[-1].strip('.mp4') + '_poseEstimate.json'),"w") as outputFile:
         #Adding the pose estimates as a dictionary to the file using dump command to the specified output json file
         json.dump({"pose_x": pose_x, "pose_y": pose_y, "hand1_x": right_hand_x, "hand1_y": right_hand_y, "hand2_x": left_hand_x, "hand2_y": left_hand_y}, outputFile)
 
@@ -114,11 +113,11 @@ if __name__=="__main__":
         videoFileName = videoPath.split('/')[-1]
         videoPathComp = videoFileName.strip('.mp4').split('_')
         if(len(videoPathComp)==3 or len(videoPathComp)==4):
-            summaryDict = videoSummary(videoPath)
+            summaryDict = videoSummary(videoPath, saveDirPath)
             print('\n----------------------------------VIDEO SUMMARY CREATED--------------------------------------------\n')
-            resizeAndCrop(videoPath)
+            resizeAndCrop(videoPath, saveDirPath)
             print('\n-------------------------------LOW RESOLUTION RGB VIDEO CREATED--------------------------------------------\n')
-            retrievePoseEstimates(videoPath)
+            retrievePoseEstimates(videoPath, saveDirPath)
             print('\n--------------------------------BODY POSE ESTIMATES CREATED--------------------------------------------\n')
         else:
             print("\n INVALID!!! NAME OF THE VIDEO FILE IS NOT FOLLOWING THE NAMING CONVENTION\n")
