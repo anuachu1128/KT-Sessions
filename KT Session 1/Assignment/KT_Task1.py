@@ -5,54 +5,34 @@ import pandas as pd
 import cv2
 import mediapipe as mp
 import json
+import argparse
+
 
 #1. SUMMARY
 def videoSummary(videoPath):
-    #Component 1: Video Path - Taken as argument
-    videoFileName = videoPath.split('/')[-1]
+    summaryDict = {}
+    summaryDict['video_path'] = videoPath
     #Getting components of the path seperated by '_' after removing .mp4 extension
     videoPathComp = videoFileName.strip('.mp4').split('_')
-    #Component 2: Environment
+    # Extracting necessary parameters and adding it onto the dictionary 
     if(videoPathComp[0][1] == 'H'):
-        env="home"
+        summaryDict['env']="home"
     else:
-        env="studio"
-    #Component 3: Signer ID
-    signerID = int(videoPathComp[1][1])
-    #Component 4: Gloss ID
-    glossID = int(videoPathComp[2])
-    #Component 5: Position
+        summaryDict['env']="studio"
+    summaryDict['signer_id'] = int(videoPathComp[1][1])
+    summaryDict['gloss_id'] = int(videoPathComp[2])
     if(videoPathComp[0][1] == 'H'):
-        position = videoPathComp[3]
+        summaryDict['position'] = videoPathComp[3]
     else:
-        position = "S"
-    #Creating the video capture object for the original video
+        summaryDict['position'] = "S"
     videoElem = cv2.VideoCapture(videoPath)
-    #Component 6: Number of frames
-    numOfFrames = int(videoElem.get(cv2.CAP_PROP_FRAME_COUNT))
-    #Component 7: Frame Rate Per Sec
-    fps = float(videoElem.get(cv2.CAP_PROP_FPS))
-    #Component 8: Height of the Video
-    videoHeight = int(videoElem.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    #Component 9: Width of the Video
-    videoWidth = int(videoElem.get(cv2.CAP_PROP_FRAME_WIDTH))
-    #Creating a list for the summary components
-    data = []
-    #Appending summary components as a list to the data list
-    data.append(['video_path',videoPath])
-    data.append(['env',env])
-    data.append(['signer_id',signerID])
-    data.append(['gloss_id',glossID])
-    data.append(['position',position])
-    data.append(['num_of_frames',numOfFrames])
-    data.append(['fps',fps])
-    data.append(['height',videoHeight])
-    data.append(['width',videoWidth])
-    data.append(['rgb_path',sys.argv[2]+videoPath.split('/')[-1].strip('.mp4')+'_lowResRGB.avi' ])
-    data.append(['pose_path', sys.argv[2]+videoPath.split('/')[-1].strip('.mp4')+'_poseEstimate.json'])
-    #Creating a dataframe using the list and converting to csv
-    df = pd.DataFrame(data)
-    df.to_csv(videoPath.split('/')[-1].strip('.mp4')+'_Summary.csv',index=False, header=False)
+    summaryDict['num_of_frames'] = int(videoElem.get(cv2.CAP_PROP_FRAME_COUNT))
+    summaryDict['fps'] = float(videoElem.get(cv2.CAP_PROP_FPS))
+    summaryDict['height'] = int(videoElem.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    summaryDict['width'] = int(videoElem.get(cv2.CAP_PROP_FRAME_WIDTH))
+    summaryDict['rgb_path'] = os.path.join(saveDirPath+"/", videoPath.split('/')[-1].strip('.mp4') + '_lowResRGB.avi')
+    summaryDict['pose_path'] = os.path.join(saveDirPath+"/", videoPath.split('/')[-1].strip('.mp4') + '_poseEstimate.json')
+    return summaryDict
 
 #2. LOW RESOLUTION RGB SQUARE VIDEO
 def resizeAndCrop(videoPath):
