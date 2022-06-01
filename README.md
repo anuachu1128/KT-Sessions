@@ -14,5 +14,5 @@ where <file_path> is the path of the input video file and <save_dir>is the path 
 
 ### 2. KT Sesssion 2
 
-The task is to write a python script that takes in a raw RGB video as input and performs Keyframe selection on it returning a video file obtained after removing reduntant frames and a .json file with necessary parameters parameters
+The task is to write a python script that takes in a raw RGB video as input and performs Keyframe selection on it returning a video file obtained after removing reduntant frames and a .json file with parameters including filename, hand height, hand distance, initial frame count, post KFS frame count, percentage reduction, hand height threshold value and hand distance threshold value. 
 
